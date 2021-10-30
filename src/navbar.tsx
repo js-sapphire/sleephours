@@ -2,6 +2,7 @@ import { useAuthService } from "./context/authContext";
 import { useCurrentUser } from "./context/useCurrentUser";
 import * as React from 'react';
 import "./navbar.css";
+import { Modal } from "./modal";
 
 export function Navbar(){
     const currentUser = useCurrentUser();
@@ -73,13 +74,13 @@ export function SignUpDg({ onClose }: any){
     }, [authService, email, password]);
 
     return (
-     <div className="signUpModal">
-        <input type="text" value={email} placeholder="Enter email" 
-        onChange={(event) => { setEmail(event.target.value) }}></input>
-        <input type="password" value={password} placeholder="Enter password"
-        onChange={(event) => setPassword(event.target.value)}></input>
-        <button className="modalSignUpButton" onClick={signUpUser}>Sign Up</button>
-     </div>
+        <>
+            <input autoComplete="new-password" type="text" value={email} placeholder="Enter email" 
+            onChange={(event) => { setEmail(event.target.value) }}></input>
+            <input autoComplete="new-password" type="password" value={password} placeholder="Enter password"
+            onChange={(event) => setPassword(event.target.value)}></input>
+            <button className="modalSignUpButton" onClick={signUpUser}>Sign Up</button>
+        </>
     );
 }
 
@@ -87,44 +88,19 @@ export function SignInDg({ onClose }: any){
     const authService = useAuthService();
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const modalRef = React.useRef<any>();
     const signInUser = React.useCallback(() => {
         authService?.signUpUserUsingCreds(email, password);
     }, [authService, email, password]);
 
     return (
-     <div className="signUpModal">
-        <input type="text" value={email} placeholder="Enter email" 
-        onChange={(event) => { setEmail(event.target.value) }}></input>
-        <input type="password" value={password} placeholder="Enter password"
-        onChange={(event) => setPassword(event.target.value)}></input>
-        <button className="modalSignUpButton" onClick={signInUser}>Sign In</button>
-     </div>
+        <>
+            <input autoComplete="new-password" type="text" value={email} placeholder="Enter email" 
+            onChange={(event) => { setEmail(event.target.value) }}></input>
+            <input autoComplete="new-password" type="password" value={password} placeholder="Enter password"
+            onChange={(event) => setPassword(event.target.value)}></input>
+            <button className="modalSignUpButton" onClick={signInUser}>Sign In</button>
+        </>
     );
-}
-
-export function Modal({ children, onClose }: any){
-    const modalRef = React.useRef<any>();
-    const onCloseCb = React.useCallback(() => {
-        onClose();
-    }, [])
-
-    React.useEffect(() => {
-        if (!modalRef?.current){
-            return;
-        }
-        modalRef.current.addEventListener('click', onCloseCb);
-        return () => {
-            modalRef.current?.removeEventListener('click', onCloseCb);
-        }
-
-    }, [modalRef])
-
-    return (
-        <div className="modal" ref={modalRef}>
-            { children }
-        </div>
-    )
 }
 
 export function SignOutButton() {

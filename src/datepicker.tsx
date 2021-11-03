@@ -69,19 +69,20 @@ export function DatePicker(){
     }, [month]);
 
     React.useEffect(() => {
-        if (!month || !year || !dateService){
+        if (!month || !year || !dateService || !visible){
             return;
         }
         const numberOfDays = dateService?.getDays(month, year) || 31;
         const dpMap = new Map();
         const dArray = [];
         for (let i=1;i<=numberOfDays;i++){
-            dpMap.set(i, dateService.getDateInEpoch(i, month, year));
+            const result = dateService.getDateInEpoch(i, month, year);
+            dpMap.set(i, result);
             dArray.push(i);
         }
         datePickerMap.current = dpMap;
         setDateArray(dArray);
-    }, [month, year]);
+    }, [month, year, visible]);
 
     return(
         <>

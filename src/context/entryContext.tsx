@@ -2,12 +2,15 @@ import * as React from 'react';
 import { useAppService } from './appServiceContext';
 import { useDateService } from './dateContext';
 import { useCurrentUser } from './useCurrentUser';
+import { omit } from "lodash";
 
 const EntryContext = React.createContext<any>(null);
 const defaultNewEntry = {
     date: "",
-    sleepTime: "00:00",
-    wakeTime: "00:00"  
+    sleepTime: "",
+    wakeTime: "",
+    sleepHhMm: "00:00",
+    wakeHhMm: "00:00"  
 }
 
 export function EntryProvider({ children } : any){
@@ -34,22 +37,33 @@ export function EntryProvider({ children } : any){
     }, [dateService])
 
     const updateEntry = React.useCallback((entryFragment) => {
-        console.log(entryFragment);
         setEntry((entry: any) => {
-            const sleepDay = entryFragment.date ?? entry.date;
-            const sleepTime = entryFragment.sleepTime ? dateService?.addMsAndGetEpoch(entryFragment.sleepTime, sleepDay) : entry.sleepTime;
-            const wakeTime = entryFragment.wakeTime ? dateService?.addMsAndGetEpoch(entryFragment.wakeTime, dateService?.getNextDayInEpoch(sleepDay)) : entry.wakeTime;
-            const updatedEntry = {
-                date: sleepDay,
-                sleepTime,
-                wakeTime
+            // Indicating date has changed
+            let newDate, newSleepTime, newWakeTime;
+            const newSleepHhMm = entryFragment.sleepHhMm || entry.sleepHhMm || "00:00"
+            const newWakeHhMm = entryFragment.wakeHhMm || entry.wakeHhMm || "00:00"
+
+            if (entryFragment.date){
+                newDate = entryFragment.date;
+                newSleepTime = dateService?.addMsAndGetEpoch(newSleepHhMm, newDate);
+                newWakeTime = dateService?.addMsAndGetEpoch(newWakeHhMm, dateService?.getNextDayInEpoch(newDate));
+            } else {
+                newDate = entry.date;
+                newSleepTime = dateService?.addMsAndGetEpoch(newSleepHhMm, entry.date);
+                newWakeTime = dateService?.addMsAndGetEpoch(newWakeHhMm, dateService.getNextDayInEpoch(entry.date))
             }
-            return updatedEntry;
+
+            return {
+                date: newDate,
+                sleepTime: newSleepTime,
+                wakeTime: newWakeTime,
+                sleepHhMm: newSleepHhMm,
+                wakeHhMm: newWakeHhMm
+            }
         });
     }, [entry]);
 
     React.useEffect(() => {
-        console.log(`Setting initial date`);
         setInitialStateCb();
     }, [dateService])
 
@@ -65,7 +79,7 @@ export function EntryProvider({ children } : any){
             throw new Error(`React context issue`);
         }
         const clientSleephour = {
-            ...stateRef.current,
+            ...omit(stateRef.current, ["sleepHhMm", "wakeHhMm"]),
             userId: currentUserRef.current.uid 
         };
         appService?.addEntry(clientSleephour);

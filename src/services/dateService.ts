@@ -7,8 +7,10 @@ export interface IDateService {
     getAppDateObject: (epoch: number) => any;
     getPresentationDate: (epoch: number) => string;
     getNextDayInEpoch: (epoch: number) => number;
-    addMsAndGetEpoch: (buffer: string, epoch: number) => number
-    getTimeBuffer: (epoch: number) => string
+    addMsAndGetEpoch: (buffer: string, epoch: number) => number;
+    getTimeBuffer: (epoch: number) => string;
+    getNDaysBeforeToday: (n: number) => number;
+    getHHMMfromMs: (timeInMs: number) => string;
 }
 
 export class DateService implements IDateService {
@@ -49,10 +51,10 @@ export class DateService implements IDateService {
 
     public getDateInEpoch(date: number, month: number, year: number) {
         const newDate = new Date();
+        newDate.setUTCHours(0,0,0,0);
         newDate.setDate(date);
         newDate.setFullYear(year);
         newDate.setMonth(month - 1);
-        newDate.setUTCHours(0,0,0,0);
         return newDate.getTime();
     }
 
@@ -106,19 +108,13 @@ export class DateService implements IDateService {
         return this.getHHMMfromMs(bufferInMilliseconds);
     }
 
-    private isLeapYear(year = new Date().getFullYear()) {
-        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)
+    public getNDaysBeforeToday(n: number) {
+        const date = new Date();
+        date.setUTCDate(date.getUTCDate() - n);
+        return date.setUTCHours(0, 0, 0, 0);
     }
 
-    private getMilliseconds(time: string){
-        if (!time){
-            return 0;
-        }
-        const timeParts = time.split(":");
-        return parseInt(timeParts[0])*3600000 + parseInt(timeParts[1])*60000;
-    }
-
-    private getHHMMfromMs(time: number) {
+    public getHHMMfromMs(time: number) {
         const hours = Math.floor(time/3600000);
         let minutes = Math.floor((time - ( hours*3600000))/60000);
         let hoursStr = `${hours}`, minsStr = `${minutes}`;
@@ -129,5 +125,17 @@ export class DateService implements IDateService {
             minsStr = `0${minutes}`;
         }
         return `${hoursStr}:${minsStr}`;
+    }
+
+    private isLeapYear(year = new Date().getFullYear()) {
+        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)
+    }
+
+    private getMilliseconds(time: string){
+        if (!time){
+            return 0;
+        }
+        const timeParts = time.split(":");
+        return parseInt(timeParts[0])*3600000 + parseInt(timeParts[1])*60000;
     }
 }

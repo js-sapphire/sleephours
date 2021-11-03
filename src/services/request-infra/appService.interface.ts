@@ -11,7 +11,7 @@ export interface IAppRequestFactory {
 }
 
 export interface IAppRequestHandler {
-    getSleephours: () => Promise<any>;
+    getSleephours: (userId: string, frequency: number) => Promise<any>;
     getSleephour: (sleephourId: string) => Promise<any>; 
     createSleephour: (sleephour: IClientSleephour) => Promise<any>;
     updateSleephour: (sleephourId: string, sleephourFrag: Partial<IClientSleephour>) => Promise<any>;

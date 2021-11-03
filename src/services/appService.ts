@@ -3,7 +3,7 @@ import { IAppRequestFactory } from "./request-infra/appService.interface";
 
 export interface IAppService{
     addEntry: (entry: any) => Promise<any>;
-    readEntries: () => Promise<any>;
+    readEntries: (userId: string, frequency: number) => Promise<any>;
     updateEntry: (sleephourId: string, sleephourFrag: any) => void;
 
 }
@@ -27,8 +27,8 @@ export class AppService implements IAppService{
         return this.requestFactory.getRequestHandler().createSleephour(entry);
     }   
 
-    public readEntries(){
-        return this.requestFactory.getRequestHandler().getSleephours();
+    public readEntries(userId: string, frequency: number){
+        return this.requestFactory.getRequestHandler().getSleephours(userId, frequency);
     }
 
     public updateEntry(sleephourId: string, sleephourFrag: any){

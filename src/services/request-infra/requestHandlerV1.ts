@@ -10,13 +10,14 @@ export class RequestHandlerV1 implements IAppRequestHandler {
         this.requestHelper = new RequestHelper();
     }
 
-    public async getSleephours(){
+    public async getSleephours(userId: string, frequency: number){
         try {
-            const fullUrl = this.serverUrl + this.requestHelper.sleephoursUrl();
+            const fullUrl = this.serverUrl + this.requestHelper.sleephoursUrl() + 
+                this.requestHelper.timeFilters(frequency) + 
+                this.requestHelper.addUserId(userId);
             const response = await fetch(fullUrl, {
                 method: "GET"
             });
-            console.log(response);
             const responseBody = await response.json();
             return responseBody;
         } catch (err) {
@@ -27,7 +28,6 @@ export class RequestHandlerV1 implements IAppRequestHandler {
     public async createSleephour(sleephour: IClientSleephour){
         try {
             const fullUrl = this.serverUrl + this.requestHelper.sleephoursUrl();
-            console.log(JSON.stringify(sleephour));
             const response = await fetch(fullUrl, {
                 method: "POST",
                 body: JSON.stringify(sleephour),
@@ -35,9 +35,7 @@ export class RequestHandlerV1 implements IAppRequestHandler {
                     "Content-Type": "application/json"
                 }
             });
-            console.log(response);
             const responseBody = await response.json();
-            console.log(responseBody);
             return responseBody;
         } catch (err) {
             throw new Error(`Client errored out`);

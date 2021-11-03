@@ -5,6 +5,7 @@ import { MainPage } from "./mainpage";
 import { Footer } from "./footer";
 import { DateServiceProvider } from "./context/dateContext";
 import { AppServiceProvider } from './context/appServiceContext';
+import { DataProvider } from './context/dataContext';
 
 function App() {
   return (
@@ -12,7 +13,9 @@ function App() {
       <Navbar />
       <AppServiceProvider>
         <DateServiceProvider>
-          <MainPage />
+          <DataProvider>
+            <MainPage />
+          </DataProvider>
         </DateServiceProvider>
       </AppServiceProvider>
       <Footer />

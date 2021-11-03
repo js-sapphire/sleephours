@@ -4,17 +4,17 @@ import { Navbar } from "./navbar";
 import { MainPage } from "./mainpage";
 import { Footer } from "./footer";
 import { DateServiceProvider } from "./context/dateContext";
-import { AppContextProvider } from './context/appContext';
+import { AppServiceProvider } from './context/appServiceContext';
 
 function App() {
   return (
     <AuthProvider>
       <Navbar />
-      <AppContextProvider>
+      <AppServiceProvider>
         <DateServiceProvider>
           <MainPage />
         </DateServiceProvider>
-      </AppContextProvider>
+      </AppServiceProvider>
       <Footer />
     </AuthProvider>
   );

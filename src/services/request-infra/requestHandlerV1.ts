@@ -6,7 +6,7 @@ export class RequestHandlerV1 implements IAppRequestHandler {
     private requestHelper: any;
 
     constructor(){
-        this.serverUrl = `https://localhost:3001/`;
+        this.serverUrl = `http://localhost:3001/`;
         this.requestHelper = new RequestHelper();
     }
 
@@ -16,7 +16,8 @@ export class RequestHandlerV1 implements IAppRequestHandler {
             const response = await fetch(fullUrl, {
                 method: "GET"
             });
-            const responseBody = await response;
+            console.log(response);
+            const responseBody = await response.json();
             return responseBody;
         } catch (err) {
             throw new Error(`Client errored out`);
@@ -26,12 +27,18 @@ export class RequestHandlerV1 implements IAppRequestHandler {
     public async createSleephour(sleephour: IClientSleephour){
         try {
             const fullUrl = this.serverUrl + this.requestHelper.sleephoursUrl();
+            console.log(JSON.stringify(sleephour));
             const response = await fetch(fullUrl, {
                 method: "POST",
-                body: JSON.stringify(sleephour)
+                body: JSON.stringify(sleephour),
+                headers: {
+                    "Content-Type": "application/json"
+                }
             });
-            const repsonseBody = await response;
-            return repsonseBody;
+            console.log(response);
+            const responseBody = await response.json();
+            console.log(responseBody);
+            return responseBody;
         } catch (err) {
             throw new Error(`Client errored out`);
         }
@@ -41,7 +48,7 @@ export class RequestHandlerV1 implements IAppRequestHandler {
         try{
             const fullUrl = this.serverUrl + this.requestHelper.sleephourUrl(sleephourId);
             const response = await fetch(fullUrl);
-            const responseBody = await response;
+            const responseBody = await response.json();
             return responseBody;
         } catch (err){
             throw new Error(`Client errored out`);

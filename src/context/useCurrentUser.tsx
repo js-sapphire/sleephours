@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useAuthService } from './authContext';
 
 export function useCurrentUser(){
-    const [currentUser, setCurrentUser] = React.useState(null);        
+    const [currentUser, setCurrentUser] = React.useState<any>(null);        
     const authService = useAuthService();
 
     React.useEffect(() => {

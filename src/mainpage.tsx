@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useAppContext } from './context/appContext';
+import { useAppService } from './context/appServiceContext';
+import { useDateService } from './context/dateContext';
 import { EntryProvider, useEntryContext } from './context/entryContext';
 import { useCurrentUser } from './context/useCurrentUser';
 import { DatePicker } from './datepicker';
@@ -20,12 +21,9 @@ function StaticLandingPage() {
 }
 
 function DynamicMainPage(){
-    const { entries } = useAppContext();
-    console.log(entries);
     return (
         <div>
             <NewEntryButton />
-            { entries && entries.map((item: any) => <div>{item.date} : {item.sleepTime} : {item.wakeTime} </div>)  }
             <SleepDurationContainer />
             <SleepStatisticsContainer />
         </div>
@@ -57,9 +55,21 @@ function NewEntryDialog({ onClose }: any){
 }
 
 function SleepDurationContainer(){
+    const appService = useAppService();
+
+    const readEntries = React.useCallback(() => {
+        if (!appService){
+            return;
+        }
+        const g = appService.readEntries();
+        g.then((entries) => {
+            console.log(entries);
+        });
+    }, []);
+
     return (
         <div>
-            Coming soon!
+            <button onClick={readEntries}>Click me to see entries</button>
         </div>
     )
 }
@@ -75,7 +85,22 @@ function SleepStatisticsContainer(){
 
 function TimePicker(){
     const { entry, updateEntry } = useEntryContext();
-    console.log(entry);
+    const dateService = useDateService();
+
+    const sleepDay = React.useMemo(() => {
+        if (!entry.date) {
+            return;
+        }
+        return dateService?.getPresentationDate(entry.date);
+    }, [entry.date]);
+
+    const wakeUpDay = React.useMemo(() => {
+        if (!entry.date) {
+            return;
+        }
+        return dateService?.getPresentationDate(dateService?.getNextDayInEpoch(entry.date));
+    }, [entry.date])
+
     const setSleepTime = React.useCallback((event) => {
         updateEntry({ sleepTime: event.target.value})
     }, []);
@@ -84,12 +109,22 @@ function TimePicker(){
         updateEntry({ wakeTime: event.target.value})
     }, []);
     
+    const sleepTimeToShow = React.useMemo(() => {
+        return dateService?.getTimeBuffer(entry.sleepTime);
+    }, [entry.sleepTime]);
+
+    const wakeTimeToShow = React.useMemo(() => {
+        return dateService?.getTimeBuffer(entry.wakeTime);
+    }, [entry.wakeTime]);
+
     return(
         <>
-        <label>Sleep time
-        <input type="time" value={entry.sleepTime} onChange={setSleepTime}></input></label>
-        <label>Wake Time
-        <input type="time" value={entry.wakeTime} onChange={setWakeTime}></input></label>
+        <label>Sleep time<br />
+        <input disabled value={sleepDay}></input>
+        <input type="time" value={sleepTimeToShow} onChange={setSleepTime}></input></label>
+        <label>Wake Time<br />
+        <input disabled value={wakeUpDay}></input>
+        <input type="time" value={wakeTimeToShow} onChange={setWakeTime}></input></label>
         </>
     )
 }

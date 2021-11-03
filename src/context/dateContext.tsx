@@ -2,18 +2,18 @@
 import * as React from 'react';
 import { DateService, IDateService } from "../services/dateService";
 
-export const appContext = React.createContext<{ dateService: IDateService | null }>({ dateService: null});
+export const DateServiceContext = React.createContext<{ dateService: IDateService | null }>({ dateService: null});
 
 export function DateServiceProvider({ children }: any){
     const dateService = DateService.getInstance();
     return (
-        <appContext.Provider value={{dateService}}>
+        <DateServiceContext.Provider value={{dateService}}>
             { children }
-        </appContext.Provider>
+        </DateServiceContext.Provider>
     )
 }
 
 export function useDateService(){
-    const { dateService } = React.useContext(appContext);
+    const { dateService } = React.useContext(DateServiceContext);
     return dateService;
 }

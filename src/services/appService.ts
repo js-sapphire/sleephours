@@ -2,8 +2,8 @@ import { AppRequestFactory } from "./request-infra/appRequestFactory";
 import { IAppRequestFactory } from "./request-infra/appService.interface";
 
 export interface IAppService{
-    addEntry: (entry: any) => void;
-    readEntries: (startDate: any, endDate: any) => void;
+    addEntry: (entry: any) => Promise<any>;
+    readEntries: () => Promise<any>;
     updateEntry: (sleephourId: string, sleephourFrag: any) => void;
 
 }

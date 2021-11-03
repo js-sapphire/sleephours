@@ -22,6 +22,13 @@ export function DatePicker(){
     const monthNameMap = React.useRef<any>();
     const { entry, updateEntry } = useEntryContext();
 
+    const dateInInput = React.useMemo(() => {
+        if (!entry.date) {
+            return;
+        }
+        return dateService?.getPresentationDate(entry.date)
+    }, [entry.date])
+
     React.useMemo(() => {
         const mnMap = new Map();
         const mnArray = [];
@@ -48,7 +55,7 @@ export function DatePicker(){
         }
         let operatingDate = entry.date;
         if (!operatingDate){
-            operatingDate = dateService.getShortDateForToday();
+            operatingDate = dateService.getEpochForToday();
         }
 
         const dateObject = dateService.getAppDateObject(operatingDate);
@@ -69,7 +76,7 @@ export function DatePicker(){
         const dpMap = new Map();
         const dArray = [];
         for (let i=1;i<=numberOfDays;i++){
-            dpMap.set(i, dateService.getShortDate(i, month, year));
+            dpMap.set(i, dateService.getDateInEpoch(i, month, year));
             dArray.push(i);
         }
         datePickerMap.current = dpMap;
@@ -78,7 +85,7 @@ export function DatePicker(){
 
     return(
         <>
-        <input value={entry.date} onClick={() => setVisible(!visible)} placeholder="Choose a date"></input>
+        <input value={dateInInput} onClick={() => setVisible(!visible)} placeholder="Choose a date"></input>
         {visible && 
             <div className="monthHeader">
                 <span className="monthName" onClick={() => setCurrentView(DatePickerView.Month)}>{monthName}</span>

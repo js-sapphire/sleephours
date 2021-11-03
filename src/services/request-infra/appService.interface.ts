@@ -22,6 +22,7 @@ export interface IClientSleephour {
     date: Date;
     sleepTime: Date;
     wakeTime: Date;
+    userId: string
 }
 
 export interface IServerSleephour extends IClientSleephour {

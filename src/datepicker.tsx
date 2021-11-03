@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useDateService } from './context/dateContext';
+import { useEntryContext } from './context/entryContext';
 import "./datepicker.css";
 
 enum DatePickerView {
@@ -15,11 +16,11 @@ export function DatePicker(){
     const [month, setMonth] = React.useState(1);
     const [date, setDate] = React.useState(1);
     const [visible, setVisible] = React.useState(false);
-    const [datePicked, setDatePicked] = React.useState<string>("");
     const [dateArray, setDateArray] = React.useState<any>([]);
     const datePickerMap = React.useRef<any>();
     const monthArray = React.useRef<any>();
     const monthNameMap = React.useRef<any>();
+    const { entry, updateEntry } = useEntryContext();
 
     React.useMemo(() => {
         const mnMap = new Map();
@@ -37,7 +38,7 @@ export function DatePicker(){
             return;
         }
         const newDate = datePickerMap.current.get(date);
-        setDatePicked(newDate)
+        updateEntry({ date: newDate });
         setVisible(false);
     }, [dateService]);
 
@@ -45,7 +46,7 @@ export function DatePicker(){
         if (!dateService){
             return;
         }
-        let operatingDate = datePicked;
+        let operatingDate = entry.date;
         if (!operatingDate){
             operatingDate = dateService.getShortDateForToday();
         }
@@ -77,7 +78,7 @@ export function DatePicker(){
 
     return(
         <>
-        <input value={datePicked} onClick={() => setVisible(!visible)} placeholder="Choose a date"></input>
+        <input value={entry.date} onClick={() => setVisible(!visible)} placeholder="Choose a date"></input>
         {visible && 
             <div className="monthHeader">
                 <span className="monthName" onClick={() => setCurrentView(DatePickerView.Month)}>{monthName}</span>
@@ -88,7 +89,7 @@ export function DatePicker(){
         {visible && currentView === DatePickerView.Date &&
             <div className="dateNumberPicker">
                 { dateArray.map((item: any) => {
-                    const className = datePicked && item === date ? "dateNumber dateNumberPicked" : "dateNumber";
+                    const className = item === date ? "dateNumber dateNumberPicked" : "dateNumber";
                     return (<span className={className} onClick={() => pickDate(item)}>{item}</span>);
                 })}
             </div>
@@ -105,6 +106,11 @@ export function DatePicker(){
                         }}>{monthName}</span>)
                 })}
             </div>
+        }
+        {
+            /**
+             * Handle last year corner case
+             */
         }
         </>
     )

@@ -7,6 +7,8 @@ import { TimePicker } from "./timepicker";
 import { EntryActionButtons } from "./entryActionButtons";
 import { useDataContext } from './context/dataContext';
 import { useDateService } from './context/dateContext';
+import { SleephourTable } from "./sleephourTable";
+import "./table.css";
 
 export function MainPage(){
     const currentUser = useCurrentUser();
@@ -68,14 +70,14 @@ function TimeDurationShower(){
     if (!duration){
         return null;
     }
-
+    
     return(
         <span>You slept for {duration} :p</span>
     )
 }
 
 function SleepDurationContainer(){
-    const { sleephours, fetchServerData } = useDataContext();
+    const { fetchServerData } = useDataContext();
     const fetchForLastMonth = () => {
         fetchServerData(30);
     }
@@ -83,14 +85,13 @@ function SleepDurationContainer(){
     return (
         <div>
             <button onClick={fetchForLastMonth}>Last 30 Days</button>
+            <SleephourTable />
         </div>
     )
 }
 
 function SleepStatisticsContainer(){
-    return (
-        <div>
-            Coming soon!
-        </div>
+    return(
+        <span>Coming soon!!</span>
     )
 }

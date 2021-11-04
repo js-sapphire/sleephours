@@ -82,7 +82,7 @@ export function EntryProvider({ children } : any){
             ...omit(stateRef.current, ["sleepHhMm", "wakeHhMm"]),
             userId: currentUserRef.current.uid 
         };
-        appService?.addEntry(clientSleephour);
+        return appService?.addEntry(clientSleephour);
     }, [stateRef.current]);
 
 

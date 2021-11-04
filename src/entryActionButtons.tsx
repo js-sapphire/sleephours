@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { useDataContext } from './context/dataContext';
 import { useEntryContext } from "./context/entryContext";
 
 export function EntryActionButtons({ onClose }: any){
     const { confirmEntry, resetEntry } = useEntryContext();
+    const { fetchServerData } = useDataContext();
+
     const confirmCb = React.useCallback(() => {
-        confirmEntry();
+        confirmEntry().then(() => { fetchServerData(); });
         onClose();
     }, []);
     return(

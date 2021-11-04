@@ -11,12 +11,14 @@ export interface IDateService {
     getTimeBuffer: (epoch: number) => string;
     getNDaysBeforeToday: (n: number) => number;
     getHHMMfromMs: (timeInMs: number) => string;
+    getPresentationDateFromServerDate: (dateTime: string) => string
 }
 
 export class DateService implements IDateService {
     static instance: DateService;
     shortDayOptions: any;
     monthNameOptions: any;
+    presentationalDayOptions: any
     monthMap: Record<number, number>
 
     private constructor() {
@@ -36,6 +38,7 @@ export class DateService implements IDateService {
         }
         // new Intl.DateTimeFormat("en-us", options)
         this.shortDayOptions = { day: "numeric", month: "numeric", year: "numeric" };
+        this.presentationalDayOptions = { day: "2-digit", month: "short", year: "2-digit" };
         this.monthNameOptions = { month: 'short' };
         if (this.isLeapYear()) {
             this.monthMap[2]++;
@@ -52,9 +55,9 @@ export class DateService implements IDateService {
     public getDateInEpoch(date: number, month: number, year: number) {
         const newDate = new Date();
         newDate.setUTCHours(0,0,0,0);
-        newDate.setDate(date);
-        newDate.setFullYear(year);
-        newDate.setMonth(month - 1);
+        newDate.setUTCMonth(month - 1);
+        newDate.setUTCFullYear(year);
+        newDate.setUTCDate(date);
         return newDate.getTime();
     }
 
@@ -80,6 +83,11 @@ export class DateService implements IDateService {
     public getPresentationDate(epoch: number){
         const date = new Date(epoch);
         return new Intl.DateTimeFormat("en-us", this.shortDayOptions).format(date);
+    }
+
+    public getPresentationDateFromServerDate(datetime: string){
+        const date = new Date(datetime);
+        return new Intl.DateTimeFormat("en-us", this.presentationalDayOptions).format(date);
     }
 
     public getAppDateObject(epoch: number) {

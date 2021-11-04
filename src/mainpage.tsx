@@ -9,6 +9,7 @@ import { useDataContext } from './context/dataContext';
 import { useDateService } from './context/dateContext';
 import { SleephourTable } from "./sleephourTable";
 import "./table.css";
+import "./dynamicmainpage.css";
 import {LineSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, XYPlot, VerticalBarSeries } from "react-vis";
 import '../node_modules/react-vis/dist/style.css';
 
@@ -28,10 +29,12 @@ function StaticLandingPage() {
 
 function DynamicMainPage(){
     return (
-        <div>
+        <div className="dynamicpageFlex">
             <NewEntryButton />
-            <SleepDurationContainer />
-            <SleepStatisticsContainer />
+            <div className="visualizationFlex">
+                <SleepDurationContainer />
+                <SleepStatisticsContainer />
+            </div>
         </div>
     )
 }
@@ -80,13 +83,29 @@ function TimeDurationShower(){
 
 function SleepDurationContainer(){
     const { fetchServerData } = useDataContext();
+    const dateService = useDateService();
+
     const fetchForLastMonth = () => {
         fetchServerData(30);
     }
 
+    const fetchForLastWeek = () => {
+        fetchServerData(7);
+    }
+
+    const fetchForThisMonth = React.useCallback(() => {
+        if (!dateService){
+            return;
+        }    
+        fetchServerData(dateService.getOffsetDaysForCurrentMonth());
+    }, [dateService, fetchServerData]);
+
+
     return (
         <div>
+            <button onClick={fetchForLastWeek}>Last 7 days</button>
             <button onClick={fetchForLastMonth}>Last 30 Days</button>
+            <button onClick={fetchForThisMonth}>This month</button>
             <SleephourTable />
         </div>
     )
@@ -107,7 +126,7 @@ function SleepStatisticsContainer(){
             return [];
         }      
 
-        return sleephours.reverse().map((sleephour: any) => ({ x:  dateService?.getEpochFromServerDate(sleephour.date)/3600000, y: sleephour.duration/3600000}));
+        return sleephours.reverse().map((sleephour: any) => ({ x:  new Date(sleephour.date), y: sleephour.duration/3600000}));
     }, [dateService, sleephours]);
 
 
@@ -117,12 +136,12 @@ function SleepStatisticsContainer(){
     }
 
     return(
-          <XYPlot height={500} width= {500}>
-            <VerticalGridLines />
+          <XYPlot height={500} width= {500} xType="time">
+            <VerticalGridLines/>
             <HorizontalGridLines />
-            <XAxis />
-            <YAxis />
-            <LineSeries data={data} />
+            <XAxis title="Dates" tickTotal={data.length} tickSize={5} tickFormat={item => dateService?.getPresentationDateFromServerDate(item) || item}/>
+            <YAxis title="Sleep duration in hrs"/>
+            <LineSeries data={data} style={{strokeLinejoin: "round"}} />
           </XYPlot> 
     )
 }

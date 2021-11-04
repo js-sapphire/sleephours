@@ -1,0 +1,10 @@
+.dynamicpageFlex{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.visualizationFlex {
+    display: flex;
+    justify-content: center;
+}

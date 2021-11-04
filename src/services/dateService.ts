@@ -13,6 +13,7 @@ export interface IDateService {
     getHHMMfromMs: (timeInMs: number) => string;
     getPresentationDateFromServerDate: (dateTime: string) => string;
     getEpochFromServerDate: (dateTime: string) => number;
+    getOffsetDaysForCurrentMonth: () => number;
 }
 
 export class DateService implements IDateService {
@@ -20,6 +21,7 @@ export class DateService implements IDateService {
     shortDayOptions: any;
     monthNameOptions: any;
     presentationalDayOptions: any
+    graphDateOptions: any
     monthMap: Record<number, number>
 
     private constructor() {
@@ -41,6 +43,7 @@ export class DateService implements IDateService {
         this.shortDayOptions = { day: "numeric", month: "numeric", year: "numeric" };
         this.presentationalDayOptions = { day: "2-digit", month: "short", year: "2-digit" };
         this.monthNameOptions = { month: 'short' };
+        this.graphDateOptions = { day: "2-digit", month: "2-digit"};
         if (this.isLeapYear()) {
             this.monthMap[2]++;
         }
@@ -88,7 +91,7 @@ export class DateService implements IDateService {
 
     public getPresentationDateFromServerDate(datetime: string){
         const date = new Date(datetime);
-        return new Intl.DateTimeFormat("en-us", this.presentationalDayOptions).format(date);
+        return new Intl.DateTimeFormat("en-us", this.graphDateOptions).format(date);
     }
 
     public getEpochFromServerDate(datetime: string){
@@ -124,6 +127,7 @@ export class DateService implements IDateService {
 
     public getNDaysBeforeToday(n: number) {
         const date = new Date();
+        date.setUTCHours(0,0,0,0);
         date.setUTCDate(date.getUTCDate() - n);
         return date.setUTCHours(0, 0, 0, 0);
     }
@@ -139,6 +143,11 @@ export class DateService implements IDateService {
             minsStr = `0${minutes}`;
         }
         return `${hoursStr}:${minsStr}`;
+    }
+
+    public getOffsetDaysForCurrentMonth() {
+        const date = new Date();
+        return date.getUTCDate() - 1;
     }
 
     private isLeapYear(year = new Date().getFullYear()) {

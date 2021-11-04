@@ -9,7 +9,6 @@ export function DataProvider({ children }: any){
     const currentUser = useCurrentUser();
     const [sleephours, setSleephours] = React.useState<any>({});
     const appService = useAppService();
-    const dateService = useDateService();
     const currentUserRef = React.useRef<any>();
     currentUserRef.current = currentUser;
     const [loading, setLoading] = React.useState(false);
@@ -25,6 +24,7 @@ export function DataProvider({ children }: any){
                 setLoading(false);
             });
         } catch {
+            setLoading(false);
             throw new Error(`Client error in reading entries`);
         }
     }, [appService, sleephours, currentUserRef.current, loading]);

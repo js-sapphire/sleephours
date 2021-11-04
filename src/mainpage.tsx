@@ -9,6 +9,8 @@ import { useDataContext } from './context/dataContext';
 import { useDateService } from './context/dateContext';
 import { SleephourTable } from "./sleephourTable";
 import "./table.css";
+import {LineSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, XYPlot, VerticalBarSeries } from "react-vis";
+import '../node_modules/react-vis/dist/style.css';
 
 export function MainPage(){
     const currentUser = useCurrentUser();
@@ -91,7 +93,36 @@ function SleepDurationContainer(){
 }
 
 function SleepStatisticsContainer(){
+    const { sleephours } = useDataContext();
+    const dateService = useDateService();
+
+    const data = React.useMemo(() => {
+        if (!dateService){
+            return [];
+        }
+        if (typeof sleephours === "object" && Object.keys(sleephours).length === 0){
+            return [];
+        }
+        if (!sleephours || sleephours?.length === 0){
+            return [];
+        }      
+
+        return sleephours.reverse().map((sleephour: any) => ({ x:  dateService?.getEpochFromServerDate(sleephour.date)/3600000, y: sleephour.duration/3600000}));
+    }, [dateService, sleephours]);
+
+
+
+    if (!data || data?.length === 0){
+        return null;
+    }
+
     return(
-        <span>Coming soon!!</span>
+          <XYPlot height={500} width= {500}>
+            <VerticalGridLines />
+            <HorizontalGridLines />
+            <XAxis />
+            <YAxis />
+            <LineSeries data={data} />
+          </XYPlot> 
     )
 }

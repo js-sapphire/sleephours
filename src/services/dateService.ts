@@ -11,7 +11,8 @@ export interface IDateService {
     getTimeBuffer: (epoch: number) => string;
     getNDaysBeforeToday: (n: number) => number;
     getHHMMfromMs: (timeInMs: number) => string;
-    getPresentationDateFromServerDate: (dateTime: string) => string
+    getPresentationDateFromServerDate: (dateTime: string) => string;
+    getEpochFromServerDate: (dateTime: string) => number;
 }
 
 export class DateService implements IDateService {
@@ -88,6 +89,11 @@ export class DateService implements IDateService {
     public getPresentationDateFromServerDate(datetime: string){
         const date = new Date(datetime);
         return new Intl.DateTimeFormat("en-us", this.presentationalDayOptions).format(date);
+    }
+
+    public getEpochFromServerDate(datetime: string){
+        const date = new Date(datetime);
+        return date.getTime();
     }
 
     public getAppDateObject(epoch: number) {

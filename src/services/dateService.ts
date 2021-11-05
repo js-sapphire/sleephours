@@ -58,15 +58,15 @@ export class DateService implements IDateService {
 
     public getDateInEpoch(date: number, month: number, year: number) {
         const newDate = new Date();
-        newDate.setUTCHours(0,0,0,0);
-        newDate.setUTCMonth(month - 1);
-        newDate.setUTCFullYear(year);
-        newDate.setUTCDate(date);
+        newDate.setHours(0,0,0,0);
+        newDate.setMonth(month - 1);
+        newDate.setFullYear(year);
+        newDate.setDate(date);
         return newDate.getTime();
     }
 
     public getEpochForToday() {
-        return new Date().setUTCHours(0,0,0,0);
+        return new Date().setHours(0,0,0,0);
     }
 
     public getMonthName(month: number) {
@@ -102,15 +102,15 @@ export class DateService implements IDateService {
     public getAppDateObject(epoch: number) {
         const currentDate = new Date(epoch);
         return {
-            date: currentDate.getUTCDate(),
-            month: currentDate.getUTCMonth() + 1,
-            year: currentDate.getUTCFullYear()
+            date: currentDate.getDate(),
+            month: currentDate.getMonth() + 1,
+            year: currentDate.getFullYear()
         }
     }
 
     public getNextDayInEpoch(epoch: number) {
         const date = new Date(epoch);
-        date.setUTCDate(date.getUTCDate() + 1);
+        date.setDate(date.getDate() + 1);
         return date.getTime();
     }
 
@@ -120,16 +120,16 @@ export class DateService implements IDateService {
     }
 
     public getTimeBuffer(epoch: number) {
-        const dateEpoch = new Date(epoch).setUTCHours(0,0,0,0);
+        const dateEpoch = new Date(epoch).setHours(0,0,0,0);
         const bufferInMilliseconds = epoch - dateEpoch;
         return this.getHHMMfromMs(bufferInMilliseconds);
     }
 
     public getNDaysBeforeToday(n: number) {
         const date = new Date();
-        date.setUTCHours(0,0,0,0);
-        date.setUTCDate(date.getUTCDate() - n);
-        return date.setUTCHours(0, 0, 0, 0);
+        date.setHours(0,0,0,0);
+        date.setDate(date.getDate() - n);
+        return date.getTime();
     }
 
     public getHHMMfromMs(time: number) {
@@ -147,7 +147,7 @@ export class DateService implements IDateService {
 
     public getOffsetDaysForCurrentMonth() {
         const date = new Date();
-        return date.getUTCDate() - 1;
+        return date.getDate() - 1;
     }
 
     private isLeapYear(year = new Date().getFullYear()) {

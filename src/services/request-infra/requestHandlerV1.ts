@@ -6,7 +6,7 @@ export class RequestHandlerV1 implements IAppRequestHandler {
     private requestHelper: any;
 
     constructor(){
-        this.serverUrl = `http://localhost:3001/`;
+        this.serverUrl = `https://sleephourbackend.azurewebsites.net/`;
         this.requestHelper = new RequestHelper();
     }
 

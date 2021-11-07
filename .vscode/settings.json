@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/bd315417-2d28-4318-8ac2-f58b83e7b98a/resourceGroups/sleephourRG/providers/Microsoft.Web/sites/sleephourfe",
+    "appService.deploySubpath": "."
+}

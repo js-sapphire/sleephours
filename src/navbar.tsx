@@ -89,7 +89,7 @@ export function SignInDg({ onClose }: any){
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const signInUser = React.useCallback(() => {
-        authService?.signUpUserUsingCreds(email, password);
+        authService?.signInUserUsingCreds(email, password);
     }, [authService, email, password]);
 
     return (

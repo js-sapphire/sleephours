@@ -4,5 +4,6 @@ What is left ?
 - Checks for entries on the same date
 - Delete entries
 - CSS work
-- deploying server
-- deploying client
+
+
+FE: https://sleephourfe.azurewebsites.net ( stopped as of now )
